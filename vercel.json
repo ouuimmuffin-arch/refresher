@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/refresh.js",
+      "src": "server.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/refresh",
-      "dest": "/api/refresh.js"
+      "src": "/api/(.*)",
+      "dest": "/server.js"
     },
     {
       "src": "/(.*)",
