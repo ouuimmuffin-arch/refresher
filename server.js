@@ -88,6 +88,9 @@ app.post('/api/refresh', async (req, res) => {
   }
 });
 
+// Vercel serverless export
+export default app;
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
