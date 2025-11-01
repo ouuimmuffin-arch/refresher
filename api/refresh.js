@@ -64,18 +64,12 @@ async function refreshCookie(cookie) {
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const { cookie } = req.body;
-  if (!cookie) {
-    return res.status(400).json({ error: 'No cookie provided' });
-  }
-
+  if (!cookie) return res.status(400).json({ error: 'No cookie provided' });
   try {
     const newCookie = await refreshCookie(cookie);
-    res.status(200).json({ new_cookie: newCookie });
+    res.json({ new_cookie: newCookie });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
