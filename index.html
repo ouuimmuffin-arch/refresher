@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refresh.lat - Roblox Cookie Refresher</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; background: #f8f9fa; color: #333; }
+        h1 { text-align: center; color: #007bff; }
+        textarea { width: 100%; height: 100px; margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: monospace; box-sizing: border-box; }
+        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        #output { margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 8px; word-break: break-all; display: none; }
+        #error { color: #dc3545; margin-top: 10px; text-align: center; display: none; }
+        .copy-btn { background: #28a745; margin-top: 10px; width: auto; padding: 8px 16px; font-size: 14px; border-radius: 4px; }
+        p { line-height: 1.5; }
+        #output textarea { height: 100px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Non-hooked Cookie Refresher (open source)</h1>
+    <p>Paste ur .roblosecurity cookie below. made by RENN, @therennify on discord</p>
+    <textarea id="cookieInput" placeholder="Paste cookie here... (_|WARNING:-DO-NOT-SHARE... )"></textarea>
+    <button onclick="refreshCookie()">Refresh Cookie</button>
+    <div id="output"></div>
+    <div id="error"></div>
+
+    <script>
+        async function refreshCookie() {
+            const input = document.getElementById('cookieInput');
+            const output = document.getElementById('output');
+            const errorDiv = document.getElementById('error');
+            const cookie = input.value.trim();
+            
+            if (!cookie) {
+                showError('Paste a cookie first, bro.');
+                return;
+            }
+            
+            hideError();
+            output.innerHTML = '<p>Refreshing... (give it a sec)</p>';
+            output.style.display = 'block';
+            
+            try {
+                const res = await fetch('/api/refresh', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cookie })
+                });
+                const data = await res.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                output.innerHTML = `
+                    <p><strong>New Cookie:</strong></p>
+                    <textarea readonly>${data.new_cookie}</textarea>
+                    <button class="copy-btn" onclick="copyNewCookie('${data.new_cookie.replace(/'/g, "\\'")}')">Copy New Cookie</button>
+                `;
+            } catch (err) {
+                output.style.display = 'none';
+                showError(`Error: ${err.message}`);
+            }
+        }
+        
+        function showError(msg) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.innerHTML = msg;
+            errorDiv.style.display = 'block';
+        }
+        
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+        
+        function copyNewCookie(newCookie) {
+            navigator.clipboard.writeText(newCookie).then(() => alert('Copied!'));
+        }
+        
+        document.getElementById('cookieInput').focus();
+    </script>
+</body>
+</html>
